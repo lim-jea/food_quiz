@@ -1,6 +1,6 @@
 import streamlit as st
 import json
-
+import matplotlib.pyplot as plt
 from pathlib import Path
 import random
 
@@ -122,6 +122,71 @@ def get_local_image_path(question):
 
 def get_cached_image(question_id):
     return build_image_cache().get(question_id)
+
+
+
+def render_result_chart(correct_count, wrong_count):
+    fig, ax = plt.subplots(figsize=(6, 4))
+    labels = ["Correct", "Wrong"]
+    values = [correct_count, wrong_count]
+    colors = ["#2E8B57", "#D9534F"]
+
+    bars = ax.bar(labels, values, color=colors)
+    ax.set_title("Quiz Result")
+    ax.set_ylabel("Question Count")
+    ax.set_ylim(0, len(QUIZ_QUESTIONS))
+
+    for bar, value in zip(bars, values):
+        ax.text(
+            bar.get_x() + bar.get_width() / 2,
+            value + 0.1,
+            str(value),
+            ha="center",
+            va="bottom",
+        )
+
+    st.pyplot(fig)
+    plt.close(fig)
+
+
+def render_question_accuracy_chart(user_data):
+    question_labels = [f"Q{index}" for index, _ in enumerate(QUIZ_QUESTIONS, start=1)]
+    correct_rates = []
+    wrong_rates = []
+
+    for question in QUIZ_QUESTIONS:
+        results = [
+            user.get("quiz_result", {}).get(question["id"])
+            for user in user_data
+            if user.get("quiz_result", {}).get(question["id"]) is not None
+        ]
+
+        if results:
+            total = len(results)
+            correct_count = sum(1 for result in results if result is True)
+            wrong_count = sum(1 for result in results if result is False)
+            correct_rates.append(correct_count / total * 100)
+            wrong_rates.append(wrong_count / total * 100)
+        else:
+            correct_rates.append(0)
+            wrong_rates.append(0)
+
+    fig, ax = plt.subplots(figsize=(12, 5))
+    ax.bar(question_labels, correct_rates, color="#2E8B57", label="Correct %")
+    ax.bar(
+        question_labels,
+        wrong_rates,
+        bottom=correct_rates,
+        color="#D9534F",
+        label="Wrong %",
+    )
+    ax.set_title("Per-Question Accuracy")
+    ax.set_ylabel("Percentage")
+    ax.set_ylim(0, 100)
+    ax.legend()
+
+    st.pyplot(fig)
+    plt.close(fig)
 
 
 login_tab, quiz_tab, result_tab = st.tabs(["로그인", "퀴즈", "결과"])
@@ -268,3 +333,55 @@ with quiz_tab:
                     st.rerun()
 with result_tab:
     st.subheader("퀴즈 결과")
+
+    if st.session_state.user is None:
+        st.warning("로그인이 필요합니다. 로그인 탭에서 로그인해주세요.")
+    else:
+        answered_count = sum(
+            1 for answer in st.session_state.quiz_answers.values()
+            if answer["is_correct"] is not None
+        )
+        if answered_count == 0:
+            st.warning("퀴즈를 풀거나 저장된 결과가 있으면 여기에 표시됩니다.")
+            st.stop()
+
+        total_questions = len(QUIZ_QUESTIONS)
+        correct_count = sum(
+            1 for answer in st.session_state.quiz_answers.values()
+            if answer["is_correct"] is True
+        )
+        wrong_count = answered_count - correct_count
+
+        if st.session_state.quiz_completed:
+            st.write(f"최종 점수: **{correct_count} / {total_questions}**")
+        else:
+            st.info("저장된 진행 결과를 보여주는 중입니다.")
+            st.write(f"현재 결과: **{correct_count} / {answered_count}**")
+
+        render_result_chart(correct_count, wrong_count)
+        st.markdown("### Question Accuracy")
+        render_question_accuracy_chart(load_user_data())
+
+        if st.session_state.quiz_completed and correct_count >= 9:
+            st.write("당신은 음식 문화 탐험가입니다!")
+        elif st.session_state.quiz_completed and correct_count >= 6:
+            st.write("음식 상식이 꽤 풍부하네요!")
+        elif st.session_state.quiz_completed:
+            st.write("다음에는 더 높은 점수에 도전해보세요!")
+
+        st.markdown("### 문제별 결과")
+        for index, question in enumerate(QUIZ_QUESTIONS, start=1):
+            user_answer = st.session_state.quiz_answers[question["id"]]
+            if user_answer["is_correct"] is None:
+                continue
+            status = "정답" if user_answer["is_correct"] else "오답"
+            st.write(
+                f"{index}. {question['question']}  \n"
+                f"- 선택한 답: {user_answer['selected']}  \n"
+                f"- 정답: {question['answer']}  \n"
+                f"- 결과: {status}"
+            )
+
+        if st.button("다시 풀기", key="restart_quiz_in_result_tab"):
+            reset_quiz(clear_saved_result=True)
+            st.rerun()

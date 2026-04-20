@@ -3,19 +3,19 @@
         "user_id": "admin",
         "password": "1234",
         "quiz_result": {
-            "stargazy_pie": null,
-            "casu_marzu": null,
-            "fugu": null,
-            "ackee": null,
-            "surstromming": null,
-            "haggis": null,
-            "black_pudding": null,
-            "longest_noodle": null,
-            "century_egg": null,
-            "durian": null,
-            "yorkshire_pudding": null
+            "stargazy_pie": false,
+            "casu_marzu": false,
+            "fugu": false,
+            "ackee": false,
+            "surstromming": false,
+            "haggis": false,
+            "black_pudding": false,
+            "longest_noodle": true,
+            "century_egg": false,
+            "durian": false,
+            "yorkshire_pudding": false
         },
-        "score": 0
+        "score": 1
     },
     {
         "user_id": "user1",
