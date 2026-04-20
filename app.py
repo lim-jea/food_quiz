@@ -1,9 +1,28 @@
 import streamlit as st
 import json
 
+from pathlib import Path
+import random
+
 
 st.title("음식 퀴즈")
 st.write("학번: 2022204048  이름: 임재영")
+
+
+@st.cache_data
+def load_quiz_data():
+    with open("data/quiz_data.json", "r", encoding="utf-8") as quiz_file:
+        return json.load(quiz_file)
+
+
+@st.cache_resource
+def build_image_cache():
+    cache = {}
+    for question in QUIZ_QUESTIONS:
+        image_path = get_local_image_path(question)
+        if image_path is not None and image_path.exists():
+            cache[question["id"]] = image_path.read_bytes()
+    return cache
 
 
 def load_user_data():
@@ -15,17 +34,10 @@ def save_user_data(user_data):
     with open("data/user_data.json", "w", encoding="utf-8") as user_file:
         json.dump(user_data, user_file, ensure_ascii=False, indent=4)
 
-question =   {
-    "id": "stargazy_pie",
-    "title": "문제 1",
-    "question": "사진 속처럼 파이 위로 생선 머리가 튀어나와 있어 별을 바라보는 것처럼 보이는 영국 음식은 무엇인가요?",
-    "image": "https://commons.wikimedia.org/wiki/Special:Redirect/file/StargazyPie.jpg",
-    "caption": "영국 콘월 지역의 독특한 파이",
-    "options": ["에그타르트", "스타게이지 파이", "애플 파이", "체리 파이"],
-    "answer": "스타게이지 파이",
-    "explanation": "스타게이지 파이는 콘월 Mousehole 지역의 Tom Bawcock's Eve 전통과 연결된 음식입니다."
-  }
-  
+
+QUIZ_QUESTIONS = load_quiz_data()
+IMAGE_DIR = Path("data/images")
+
 
 if "user" not in st.session_state:
     st.session_state.user = None
@@ -33,12 +45,84 @@ if "password" not in st.session_state:
     st.session_state.password = None
 if "show_signup" not in st.session_state:
     st.session_state.show_signup = False
-
-
+if "current_question_index" not in st.session_state:
+    st.session_state.current_question_index = 0
+if "quiz_completed" not in st.session_state:
+    st.session_state.quiz_completed = False
 if "quiz_answers" not in st.session_state:
     st.session_state.quiz_answers = {
         question["id"]: {"selected": None, "is_correct": None}
+        for question in QUIZ_QUESTIONS
     }
+if "quiz_options_order" not in st.session_state:
+    st.session_state.quiz_options_order = {}
+
+for question in QUIZ_QUESTIONS:
+    if question["id"] not in st.session_state.quiz_options_order:
+        shuffled_options = question["options"][:]
+        random.shuffle(shuffled_options)
+        st.session_state.quiz_options_order[question["id"]] = shuffled_options
+
+
+def reset_quiz(clear_saved_result=False):
+    st.session_state.current_question_index = 0
+    st.session_state.quiz_completed = False
+    st.session_state.quiz_answers = {
+        question["id"]: {"selected": None, "is_correct": None}
+        for question in QUIZ_QUESTIONS
+    }
+    st.session_state.quiz_options_order = {}
+    for question in QUIZ_QUESTIONS:
+        shuffled_options = question["options"][:]
+        random.shuffle(shuffled_options)
+        st.session_state.quiz_options_order[question["id"]] = shuffled_options
+
+    if clear_saved_result and st.session_state.user is not None:
+        user_data = load_user_data()
+        for user in user_data:
+            if user["user_id"] == st.session_state.user:
+                user["quiz_result"] = {
+                    question["id"]: None for question in QUIZ_QUESTIONS
+                }
+                user["score"] = 0
+                break
+        save_user_data(user_data)
+        
+def save_result():
+    if st.session_state.user is None:
+        return
+
+    quiz_result = {
+        question["id"]: st.session_state.quiz_answers[question["id"]]["is_correct"]
+        for question in QUIZ_QUESTIONS
+    }
+    score = sum(1 for result in quiz_result.values() if result is True)
+
+    user_data = load_user_data()
+    for user in user_data:
+        if user["user_id"] == st.session_state.user:
+            user["quiz_result"] = quiz_result
+            user["score"] = score
+            break
+    save_user_data(user_data)
+
+
+def get_local_image_path(question):
+    image_value = question["image"]
+    image_path = Path(image_value)
+    if image_path.exists():
+        return image_path
+
+    for local_path in IMAGE_DIR.glob(f"{question['id']}.*"):
+        if local_path.exists():
+            return local_path
+
+    return None
+
+
+def get_cached_image(question_id):
+    return build_image_cache().get(question_id)
+
 
 login_tab, quiz_tab, result_tab = st.tabs(["로그인", "퀴즈", "결과"])
 
@@ -118,34 +202,69 @@ with login_tab:
 
 with quiz_tab:
     st.subheader("음식 퀴즈")
-    
+
     if st.session_state.user is None:
         st.warning("로그인이 필요합니다. 로그인 탭에서 로그인해주세요.")
     else:
-        st.write(f"환영합니다! 퀴즈를 시작하세요.")
+        answered_count = sum(
+            1 for answer in st.session_state.quiz_answers.values()
+            if answer["selected"] is not None
+        )
+        correct_count = sum(
+            1 for answer in st.session_state.quiz_answers.values()
+            if answer["is_correct"] is True
+        )
+        total_questions = len(QUIZ_QUESTIONS)
+        progress_ratio = answered_count / total_questions if total_questions else 0
+
+        st.write(f"환영합니다, {st.session_state.user}님! 퀴즈를 시작하세요.")
         st.markdown("## 음식 잡상식 퀴즈")
-        
-        with st.expander(question["title"], expanded=True):
-            cached_image = st.image(question["image"])
-            st.caption(question["caption"])
-            st.markdown(f"### {question['question']}")
+        st.write(f"현재 진행도: **{answered_count} / {total_questions}**")
+        st.write(f"현재 정답 수: **{correct_count} / {total_questions}**")
+        st.progress(progress_ratio)
 
-            selected_option = st.radio(
-                "정답을 선택하세요:",
-                options=question["options"],
-                key=f"quiz_answer_{question['id']}",
-            )
+        if st.session_state.quiz_completed:
+            st.success("모든 문제를 완료했습니다. 결과 탭에서 확인해주세요.")
+            if st.button("다시 풀기", key="restart_quiz_in_quiz_tab"):
+                reset_quiz(clear_saved_result=True)
+                st.rerun()
+        else:
+            current_index = st.session_state.current_question_index
+            if current_index >= total_questions:
+                current_index = total_questions - 1
+                st.session_state.current_question_index = current_index
+            question = QUIZ_QUESTIONS[current_index]
 
-            if st.button("다음 문제로", key=f"submit_{question['id']}"):
-                is_correct = selected_option == question["answer"]
-                st.session_state.quiz_answers[question["id"]] = {
-                    "selected": selected_option,
-                    "is_correct": is_correct,
-                }
-                if is_correct:
-                    st.success("정답입니다!")
+            st.write(f"현재 문제: **{current_index + 1} / {total_questions}**")
+
+            with st.expander(question["title"], expanded=True):
+                cached_image = get_cached_image(question["id"])
+                if cached_image is not None:
+                    st.image(cached_image, width=400)
                 else:
-                    st.error(f"틀렸습니다. 정답은 '{question['answer']}'입니다.")
+                    st.warning("이미지 캐시 파일이 없습니다.")
+                st.caption(question["caption"])
+                st.markdown(f"### {question['question']}")
 
+                selected_option = st.radio(
+                    "정답을 선택하세요:",
+                    st.session_state.quiz_options_order[question["id"]],
+                    key=f"quiz_answer_{question['id']}",
+                )
+
+                if st.button("다음 문제로", key=f"submit_{question['id']}"):
+                    is_correct = selected_option == question["answer"]
+                    st.session_state.quiz_answers[question["id"]] = {
+                        "selected": selected_option,
+                        "is_correct": is_correct,
+                    }
+
+                    if current_index + 1 < total_questions:
+                        st.session_state.current_question_index += 1
+                    else:
+                        st.session_state.quiz_completed = True
+                        save_result()
+
+                    st.rerun()
 with result_tab:
     st.subheader("퀴즈 결과")

@@ -1,58 +1,254 @@
 [
     {
         "user_id": "admin",
-        "password": "1234"
+        "password": "1234",
+        "quiz_result": {
+            "stargazy_pie": null,
+            "casu_marzu": null,
+            "fugu": null,
+            "ackee": null,
+            "surstromming": null,
+            "haggis": null,
+            "black_pudding": null,
+            "longest_noodle": null,
+            "century_egg": null,
+            "durian": null,
+            "yorkshire_pudding": null
+        },
+        "score": 0
     },
     {
         "user_id": "user1",
-        "password": "abcd"
+        "password": "abcd",
+        "quiz_result": {
+            "stargazy_pie": true,
+            "casu_marzu": true,
+            "fugu": true,
+            "ackee": false,
+            "surstromming": true,
+            "haggis": true,
+            "black_pudding": true,
+            "longest_noodle": true,
+            "century_egg": true,
+            "durian": null,
+            "yorkshire_pudding": null
+        },
+        "score": 8
     },
     {
         "user_id": "user2",
-        "password": "efgh"
+        "password": "efgh",
+        "quiz_result": {
+            "stargazy_pie": null,
+            "casu_marzu": null,
+            "fugu": null,
+            "ackee": null,
+            "surstromming": null,
+            "haggis": null,
+            "black_pudding": null,
+            "longest_noodle": null,
+            "century_egg": null,
+            "durian": null,
+            "yorkshire_pudding": null
+        },
+        "score": 0
     },
     {
         "user_id": "limjaeyoung",
-        "password": "1234"
+        "password": "1234",
+        "quiz_result": {
+            "stargazy_pie": true,
+            "casu_marzu": false,
+            "fugu": false,
+            "ackee": true,
+            "surstromming": false,
+            "haggis": false,
+            "black_pudding": false,
+            "longest_noodle": false,
+            "century_egg": true,
+            "durian": false,
+            "yorkshire_pudding": true
+        },
+        "score": 4
     },
     {
         "user_id": "user3",
-        "password": "pass3"
+        "password": "pass3",
+        "quiz_result": {
+            "stargazy_pie": true,
+            "casu_marzu": false,
+            "fugu": true,
+            "ackee": true,
+            "surstromming": false,
+            "haggis": true,
+            "black_pudding": false,
+            "longest_noodle": true,
+            "century_egg": true,
+            "durian": false,
+            "yorkshire_pudding": true
+        },
+        "score": 7
     },
     {
         "user_id": "user4",
-        "password": "pass4"
+        "password": "pass4",
+        "quiz_result": {
+            "stargazy_pie": false,
+            "casu_marzu": false,
+            "fugu": false,
+            "ackee": true,
+            "surstromming": false,
+            "haggis": false,
+            "black_pudding": true,
+            "longest_noodle": false,
+            "century_egg": true,
+            "durian": true,
+            "yorkshire_pudding": false
+        },
+        "score": 4
     },
     {
         "user_id": "user5",
-        "password": "pass5"
+        "password": "pass5",
+        "quiz_result": {
+            "stargazy_pie": true,
+            "casu_marzu": true,
+            "fugu": true,
+            "ackee": false,
+            "surstromming": true,
+            "haggis": false,
+            "black_pudding": true,
+            "longest_noodle": true,
+            "century_egg": false,
+            "durian": true,
+            "yorkshire_pudding": false
+        },
+        "score": 7
     },
     {
         "user_id": "user6",
-        "password": "pass6"
+        "password": "pass6",
+        "quiz_result": {
+            "stargazy_pie": false,
+            "casu_marzu": true,
+            "fugu": false,
+            "ackee": true,
+            "surstromming": true,
+            "haggis": true,
+            "black_pudding": true,
+            "longest_noodle": false,
+            "century_egg": true,
+            "durian": false,
+            "yorkshire_pudding": true
+        },
+        "score": 7
     },
     {
         "user_id": "user7",
-        "password": "pass7"
+        "password": "pass7",
+        "quiz_result": {
+            "stargazy_pie": true,
+            "casu_marzu": null,
+            "fugu": true,
+            "ackee": false,
+            "surstromming": true,
+            "haggis": null,
+            "black_pudding": false,
+            "longest_noodle": true,
+            "century_egg": true,
+            "durian": null,
+            "yorkshire_pudding": false
+        },
+        "score": 5
     },
     {
         "user_id": "user8",
-        "password": "pass8"
+        "password": "pass8",
+        "quiz_result": {
+            "stargazy_pie": false,
+            "casu_marzu": true,
+            "fugu": true,
+            "ackee": false,
+            "surstromming": false,
+            "haggis": true,
+            "black_pudding": true,
+            "longest_noodle": true,
+            "century_egg": false,
+            "durian": true,
+            "yorkshire_pudding": true
+        },
+        "score": 7
     },
     {
         "user_id": "user9",
-        "password": "pass9"
+        "password": "pass9",
+        "quiz_result": {
+            "stargazy_pie": true,
+            "casu_marzu": false,
+            "fugu": false,
+            "ackee": true,
+            "surstromming": true,
+            "haggis": false,
+            "black_pudding": true,
+            "longest_noodle": false,
+            "century_egg": true,
+            "durian": true,
+            "yorkshire_pudding": false
+        },
+        "score": 6
     },
     {
         "user_id": "user10",
-        "password": "pass10"
+        "password": "pass10",
+        "quiz_result": {
+            "stargazy_pie": false,
+            "casu_marzu": true,
+            "fugu": true,
+            "ackee": true,
+            "surstromming": false,
+            "haggis": true,
+            "black_pudding": false,
+            "longest_noodle": true,
+            "century_egg": true,
+            "durian": false,
+            "yorkshire_pudding": true
+        },
+        "score": 7
     },
     {
         "user_id": "user11",
-        "password": "pass11"
+        "password": "pass11",
+        "quiz_result": {
+            "stargazy_pie": true,
+            "casu_marzu": true,
+            "fugu": false,
+            "ackee": false,
+            "surstromming": true,
+            "haggis": true,
+            "black_pudding": true,
+            "longest_noodle": false,
+            "century_egg": true,
+            "durian": true,
+            "yorkshire_pudding": null
+        },
+        "score": 7
     },
     {
         "user_id": "user12",
-        "password": "pass12"
+        "password": "pass12",
+        "quiz_result": {
+            "stargazy_pie": false,
+            "casu_marzu": false,
+            "fugu": true,
+            "ackee": true,
+            "surstromming": true,
+            "haggis": false,
+            "black_pudding": true,
+            "longest_noodle": true,
+            "century_egg": false,
+            "durian": true,
+            "yorkshire_pudding": true
+        },
+        "score": 7
     }
 ]

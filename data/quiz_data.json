@@ -1,0 +1,112 @@
+[
+  {
+    "id": "stargazy_pie",
+    "title": "문제 1",
+    "question": "사진 속처럼 파이 위로 생선 머리가 튀어나와 있어 별을 바라보는 것처럼 보이는 영국 음식은 무엇인가요?",
+    "image": "https://commons.wikimedia.org/wiki/Special:Redirect/file/StargazyPie.jpg",
+    "caption": "영국 콘월 지역의 독특한 파이",
+    "options": ["에그타르트", "스타게이지 파이", "애플 파이", "체리 파이"],
+    "answer": "스타게이지 파이",
+    "explanation": "스타게이지 파이는 콘월 Mousehole 지역의 Tom Bawcock's Eve 전통과 연결된 음식입니다."
+  },
+  {
+    "id": "casu_marzu",
+    "title": "문제 2",
+    "question": "살아 있는 구더기가 발효 과정에 관여하는 것으로 유명한 사르데냐의 전통 치즈는 무엇인가요?",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Casu%20Marzu%20cheese.jpg",
+    "caption": "사르데냐의 매우 독특한 치즈",
+    "options": ["고르곤졸라", "카수 마르주", "브리 치즈", "리코타"],
+    "answer": "카수 마르주",
+    "explanation": "카수 마르주는 건강 문제 때문에 이탈리아에서 상업적 판매가 불법이며 여러 나라에서도 금지됩니다."
+  },
+  {
+    "id": "fugu",
+    "title": "문제 3",
+    "question": "독성 때문에 정교한 손질과 전문 자격 체계로 유명한 일본 음식은 무엇인가요?",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Fugu%20sashimi%20%2832738795990%29.jpg",
+    "caption": "복어를 얇게 썬 일본 요리",
+    "options": ["초밥", "후구", "오코노미야키", "타코야키"],
+    "answer": "후구",
+    "explanation": "후구는 복어 요리로, 테트로도톡신 독성 때문에 훈련된 조리사가 매우 엄격하게 다룹니다."
+  },
+  {
+    "id": "ackee",
+    "title": "문제 4",
+    "question": "OX 문제: 아키는 익기 전 상태로 먹는 것이 안전하다.",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Jamaican%20breakfast%20foods.jpg",
+    "caption": "자메이카 대표 음식 재료로도 쓰이는 아키",
+    "options": ["O", "X"],
+    "answer": "X",
+    "explanation": "아키는 익지 않았을 때 독성이 있어 치명적일 수 있습니다."
+  },
+  {
+    "id": "surstromming",
+    "title": "문제 5",
+    "question": "강한 냄새로 유명한 스웨덴의 발효 청어 음식은 무엇인가요?",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Surstromming%20can.jpg",
+    "caption": "북유럽의 대표적인 발효 생선 음식",
+    "options": ["수르스트뢰밍", "사시미", "피시앤칩스", "그라블락스"],
+    "answer": "수르스트뢰밍",
+    "explanation": "수르스트뢰밍은 발효한 발트해 청어로 만들며 특히 북부 스웨덴에서 인기가 있습니다."
+  },
+  {
+    "id": "haggis",
+    "title": "문제 6",
+    "question": "양의 간·심장·허파 등을 다져 오트밀과 섞어 만드는 스코틀랜드의 대표 음식은 무엇인가요?",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Haggis.JPG",
+    "caption": "스코틀랜드의 국민 음식으로 알려진 요리",
+    "options": ["하기스", "셰퍼드 파이", "요크셔 푸딩", "로스트 비프"],
+    "answer": "하기스",
+    "explanation": "하기스는 스코틀랜드의 전통 음식으로 Burns Night에도 자주 등장합니다."
+  },
+  {
+    "id": "black_pudding",
+    "title": "문제 7",
+    "question": "돼지 피와 오트밀 또는 보리 등을 넣어 만드는 영국·아일랜드식 혈액 소시지는 무엇인가요?",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Stornoway%20Black%20Pudding.jpg",
+    "caption": "짙은 색의 혈액 소시지",
+    "options": ["블랙 푸딩", "푸딩 케이크", "스콘", "머핀"],
+    "answer": "블랙 푸딩",
+    "explanation": "블랙 푸딩은 디저트가 아니라 피를 넣어 만드는 소시지 형태의 음식입니다."
+  },
+  {
+    "id": "longest_noodle",
+    "title": "문제 8",
+    "question": "기네스 월드 레코드 기준 세계에서 가장 긴 국수 길이에 가장 가까운 값은 무엇인가요?",
+    "image": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Chinese%20Noodles.jpg",
+    "caption": "세계 최장 국수 기록 문제에 사용하는 국수 이미지",
+    "options": ["308m", "1,024m", "3,084m", "10,000m"],
+    "answer": "3,084m",
+    "explanation": "기네스는 2017년 중국에서 만든 3,084.32m 국수를 세계 최장 기록으로 소개합니다."
+  },
+  {
+    "id": "century_egg",
+    "title": "문제 9",
+    "question": "송화단으로도 불리는 중국식 삭힌 계란의 영어 이름으로 가장 알맞은 것은 무엇인가요?",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Century%20egg%20sliced%20open.jpeg",
+    "caption": "검은빛 반투명 흰자와 짙은 노른자가 특징인 보존 식품",
+    "options": ["Century egg", "Cloud egg", "Salt egg tart", "Moon egg"],
+    "answer": "Century egg",
+    "explanation": "송화단은 century egg 또는 thousand-year egg로도 불리는 중국식 preserved egg입니다."
+  },
+  {
+    "id": "durian",
+    "title": "문제 10",
+    "question": "달콤한 맛과는 별개로 강한 냄새 때문에 일부 대중교통이나 공공장소 반입 금지로도 유명한 과일은 무엇인가요?",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Durian%20fruit.JPG",
+    "caption": "동남아시아를 대표하는 향 강한 과일",
+    "options": ["망고스틴", "두리안", "람부탄", "파파야"],
+    "answer": "두리안",
+    "explanation": "두리안은 향이 매우 강해 일부 지역에서는 대중교통이나 호텔 반입이 제한되기도 합니다."
+  },
+  {
+    "id": "yorkshire_pudding",
+    "title": "문제 11",
+    "question": "OX 문제: 요크셔 푸딩은 달콤한 디저트 푸딩이다.",
+    "image": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Yorkshire-puddings.jpg",
+    "caption": "영국식 로스트 요리와 자주 곁들이는 음식",
+    "options": ["O", "X"],
+    "answer": "X",
+    "explanation": "요크셔 푸딩은 보통 로스트 비프 같은 메인 요리에 곁들이는 짭짤한 반죽 요리입니다."
+  }
+]
