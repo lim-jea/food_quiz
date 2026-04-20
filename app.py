@@ -1,10 +1,9 @@
-import streamlit as st
 import json
-import matplotlib.pyplot as plt
 from pathlib import Path
 import random
 
-
+import matplotlib.pyplot as plt
+import streamlit as st
 
 st.title("음식 퀴즈")
 st.write("학번: 2022204048  이름: 임재영")
@@ -34,6 +33,42 @@ def load_user_data():
 def save_user_data(user_data):
     with open("data/user_data.json", "w", encoding="utf-8") as user_file:
         json.dump(user_data, user_file, ensure_ascii=False, indent=4)
+
+
+def get_user_record(username):
+    user_data = load_user_data()
+    for user in user_data:
+        if user["user_id"] == username:
+            return user
+    return None
+
+
+def sync_user_result(username):
+    quiz_ids = [question["id"] for question in QUIZ_QUESTIONS]
+    user_data = load_user_data()
+    updated = False
+
+    for user in user_data:
+        if user["user_id"] != username:
+            continue
+
+        quiz_result = user.get("quiz_result", {})
+        ordered_result = {
+            question_id: quiz_result.get(question_id)
+            if quiz_result.get(question_id) in (True, False)
+            else None
+            for question_id in quiz_ids
+        }
+        score = sum(1 for result in ordered_result.values() if result is True)
+
+        if ordered_result != quiz_result or user.get("score") != score:
+            user["quiz_result"] = ordered_result
+            user["score"] = score
+            updated = True
+        break
+
+    if updated:
+        save_user_data(user_data)
 
 
 QUIZ_QUESTIONS = load_quiz_data()
@@ -88,7 +123,54 @@ def reset_quiz(clear_saved_result=False):
                 user["score"] = 0
                 break
         save_user_data(user_data)
-        
+
+
+def load_saved_result_to_session(username):
+    sync_user_result(username)
+    user = get_user_record(username)
+    if user is None:
+        return
+
+    saved_result = user.get("quiz_result", {})
+    if not saved_result or all(result is None for result in saved_result.values()):
+        reset_quiz()
+        return
+
+    st.session_state.quiz_answers = {}
+    for question in QUIZ_QUESTIONS:
+        question_id = question["id"]
+        is_correct = saved_result.get(question_id)
+
+        if is_correct is True:
+            selected = question["answer"]
+        elif is_correct is False:
+            wrong_options = [
+                option for option in question["options"]
+                if option != question["answer"]
+            ]
+            selected = wrong_options[0] if wrong_options else None
+        else:
+            selected = None
+
+        st.session_state.quiz_answers[question_id] = {
+            "selected": selected,
+            "is_correct": is_correct,
+        }
+
+    unanswered_index = next(
+        (
+            index
+            for index, question in enumerate(QUIZ_QUESTIONS)
+            if st.session_state.quiz_answers[question["id"]]["is_correct"] is None
+        ),
+        None,
+    )
+    st.session_state.quiz_completed = unanswered_index is None
+    st.session_state.current_question_index = (
+        unanswered_index if unanswered_index is not None else len(QUIZ_QUESTIONS) - 1
+    )
+
+
 def save_result():
     if st.session_state.user is None:
         return
@@ -123,7 +205,6 @@ def get_local_image_path(question):
 
 def get_cached_image(question_id):
     return build_image_cache().get(question_id)
-
 
 
 def render_result_chart(correct_count, wrong_count):
@@ -213,6 +294,7 @@ with login_tab:
             st.success("로그인 성공!")
             st.session_state.user = username
             st.session_state.password = password
+            load_saved_result_to_session(username)
         else:
             st.error("아이디 또는 비밀번호가 잘못되었습니다.")
 
@@ -243,7 +325,9 @@ with login_tab:
                 user_data.append(
                     {
                         "user_id": new_username,
-                        "password": new_password
+                        "password": new_password,
+                        "quiz_result": {},
+                        "score": 0,
                     }
                 )
                 save_user_data(user_data)
@@ -251,17 +335,8 @@ with login_tab:
                 st.session_state.user = new_username
                 st.session_state.password = new_password
                 st.session_state.show_signup = False
-                
-                user_data = load_user_data()
-                updated = False
-
-                for user in user_data:
-                    if user["user_id"] != username:
-                        continue
-                    break
-
-                if updated:
-                    save_user_data(user_data)
+                sync_user_result(new_username)
+                reset_quiz()
 
         if st.button("회원가입 창 닫기", key="close_signup"):
             st.session_state.show_signup = False
@@ -332,6 +407,7 @@ with quiz_tab:
                         save_result()
 
                     st.rerun()
+
 with result_tab:
     st.subheader("퀴즈 결과")
 
