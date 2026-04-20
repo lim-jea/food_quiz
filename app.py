@@ -5,6 +5,7 @@ from pathlib import Path
 import random
 
 
+
 st.title("음식 퀴즈")
 st.write("학번: 2022204048  이름: 임재영")
 
