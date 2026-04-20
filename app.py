@@ -15,6 +15,17 @@ def save_user_data(user_data):
     with open("data/user_data.json", "w", encoding="utf-8") as user_file:
         json.dump(user_data, user_file, ensure_ascii=False, indent=4)
 
+question =   {
+    "id": "stargazy_pie",
+    "title": "문제 1",
+    "question": "사진 속처럼 파이 위로 생선 머리가 튀어나와 있어 별을 바라보는 것처럼 보이는 영국 음식은 무엇인가요?",
+    "image": "https://commons.wikimedia.org/wiki/Special:Redirect/file/StargazyPie.jpg",
+    "caption": "영국 콘월 지역의 독특한 파이",
+    "options": ["에그타르트", "스타게이지 파이", "애플 파이", "체리 파이"],
+    "answer": "스타게이지 파이",
+    "explanation": "스타게이지 파이는 콘월 Mousehole 지역의 Tom Bawcock's Eve 전통과 연결된 음식입니다."
+  }
+  
 
 if "user" not in st.session_state:
     st.session_state.user = None
@@ -22,6 +33,12 @@ if "password" not in st.session_state:
     st.session_state.password = None
 if "show_signup" not in st.session_state:
     st.session_state.show_signup = False
+
+
+if "quiz_answers" not in st.session_state:
+    st.session_state.quiz_answers = {
+        question["id"]: {"selected": None, "is_correct": None}
+    }
 
 login_tab, quiz_tab, result_tab = st.tabs(["로그인", "퀴즈", "결과"])
 
@@ -101,9 +118,34 @@ with login_tab:
 
 with quiz_tab:
     st.subheader("음식 퀴즈")
+    
+    if st.session_state.user is None:
+        st.warning("로그인이 필요합니다. 로그인 탭에서 로그인해주세요.")
+    else:
+        st.write(f"환영합니다! 퀴즈를 시작하세요.")
+        st.markdown("## 음식 잡상식 퀴즈")
+        
+        with st.expander(question["title"], expanded=True):
+            cached_image = st.image(question["image"])
+            st.caption(question["caption"])
+            st.markdown(f"### {question['question']}")
 
-    st.write(f"환영합니다! 퀴즈를 시작하세요.")
-    st.markdown("## 음식 잡상식 퀴즈")
+            selected_option = st.radio(
+                "정답을 선택하세요:",
+                options=question["options"],
+                key=f"quiz_answer_{question['id']}",
+            )
+
+            if st.button("다음 문제로", key=f"submit_{question['id']}"):
+                is_correct = selected_option == question["answer"]
+                st.session_state.quiz_answers[question["id"]] = {
+                    "selected": selected_option,
+                    "is_correct": is_correct,
+                }
+                if is_correct:
+                    st.success("정답입니다!")
+                else:
+                    st.error(f"틀렸습니다. 정답은 '{question['answer']}'입니다.")
 
 with result_tab:
     st.subheader("퀴즈 결과")
