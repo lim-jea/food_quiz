@@ -27,10 +27,12 @@ def build_image_cache():
 
 def load_user_data():
     with open("data/user_data.json", "r", encoding="utf-8") as user_file:
-        return json.load(user_file)
+        user_data = json.load(user_file)
+    return user_data
 
 
 def save_user_data(user_data):
+    print(f"유저 데이터 저장: {len(user_data)}명")
     with open("data/user_data.json", "w", encoding="utf-8") as user_file:
         json.dump(user_data, user_file, ensure_ascii=False, indent=4)
 
@@ -69,6 +71,7 @@ def sync_user_result(username):
 
     if updated:
         save_user_data(user_data)
+        print(f"유저 결과 동기화: 변경사항 저장 - 사용자: {username}")
 
 
 QUIZ_QUESTIONS = load_quiz_data()
@@ -101,6 +104,7 @@ for question in QUIZ_QUESTIONS:
 
 
 def reset_quiz(clear_saved_result=False):
+    print(f"퀴즈 초기화 - 사용자: {st.session_state.user}, clear_saved_result={clear_saved_result}")
     st.session_state.current_question_index = 0
     st.session_state.quiz_completed = False
     st.session_state.quiz_answers = {
@@ -123,6 +127,9 @@ def reset_quiz(clear_saved_result=False):
                 user["score"] = 0
                 break
         save_user_data(user_data)
+
+
+# Tab logging removed - tab changes are visible on UI
 
 
 def load_saved_result_to_session(username):
@@ -157,6 +164,10 @@ def load_saved_result_to_session(username):
             "is_correct": is_correct,
         }
 
+    answered_count = sum(1 for a in st.session_state.quiz_answers.values() if a["is_correct"] is not None)
+    total_questions = len(QUIZ_QUESTIONS)
+    print(f"저장된 결과 적용 완료 - 사용자: {username}, 완료문제: {answered_count}/{total_questions}")
+
     unanswered_index = next(
         (
             index
@@ -180,6 +191,9 @@ def save_result():
         for question in QUIZ_QUESTIONS
     }
     score = sum(1 for result in quiz_result.values() if result is True)
+    answered_count = sum(1 for result in quiz_result.values() if result is not None)
+    total_questions = len(QUIZ_QUESTIONS)
+    print(f"결과 저장 - 사용자: {st.session_state.user}, 점수: {score}, 완료문제: {answered_count}/{total_questions}")
 
     user_data = load_user_data()
     for user in user_data:
@@ -188,6 +202,20 @@ def save_result():
             user["score"] = score
             break
     save_user_data(user_data)
+
+
+def log_option_select(question_id):
+    sel = st.session_state.get(f"quiz_answer_{question_id}")
+    prev_selected = st.session_state.quiz_answers.get(question_id, {}).get("selected")
+    # Only log when selection actually changes to a non-empty value
+    if sel is None or sel == prev_selected:
+        return
+    answered_count = sum(1 for a in st.session_state.quiz_answers.values() if a["selected"] is not None)
+    if prev_selected is None:
+        answered_count += 1
+    total_questions = len(QUIZ_QUESTIONS)
+    remaining = total_questions - answered_count
+    print(f"선택 - ID:{question_id}, 선택:{sel}, 남은:{remaining}")
 
 
 def get_local_image_path(question):
@@ -291,11 +319,13 @@ with login_tab:
                 break
 
         if user is not None:
+            print(f"로그인 성공 - 사용자: {username}")
             st.success("로그인 성공!")
             st.session_state.user = username
             st.session_state.password = password
             load_saved_result_to_session(username)
         else:
+            print("로그인 실패 - 아이디/비번 불일치")
             st.error("아이디 또는 비밀번호가 잘못되었습니다.")
 
     if st.button("회원가입 창 열기", key="open_signup"):
@@ -330,6 +360,7 @@ with login_tab:
                         "score": 0,
                     }
                 )
+                print(f"회원가입 완료 - 사용자: {new_username}")
                 save_user_data(user_data)
                 st.success("회원가입이 완료되었습니다!")
                 st.session_state.user = new_username
@@ -367,6 +398,7 @@ with quiz_tab:
         if st.session_state.quiz_completed:
             st.success("모든 문제를 완료했습니다. 결과 탭에서 확인해주세요.")
             if st.button("다시 풀기", key="restart_quiz_in_quiz_tab"):
+                print("퀴즈 재시작")
                 reset_quiz(clear_saved_result=True)
                 st.rerun()
         else:
@@ -391,9 +423,11 @@ with quiz_tab:
                     "정답을 선택하세요:",
                     st.session_state.quiz_options_order[question["id"]],
                     key=f"quiz_answer_{question['id']}",
+                    on_change=lambda qid=question["id"]: log_option_select(qid),
                 )
 
                 if st.button("다음 문제로", key=f"submit_{question['id']}"):
+                    print(f"문제 제출 - ID: {question['id']}, 선택: {selected_option}")
                     is_correct = selected_option == question["answer"]
                     st.session_state.quiz_answers[question["id"]] = {
                         "selected": selected_option,
@@ -460,5 +494,6 @@ with result_tab:
             )
 
         if st.button("다시 풀기", key="restart_quiz_in_result_tab"):
+            print("퀴즈 재시작")
             reset_quiz(clear_saved_result=True)
             st.rerun()
